@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../styles/optionStyles.css">
+  </head>
+  <body>
+    <div id="topDiv">
+      <h1>Just My Size</h1>
+      <h2>My Sizes</h2>
+    </div>
+
+    <div id="sizeDiv">
+      <h2 id="addSizestoPage">The perfect fit every time - save your sizes now!</h2>
+    </div>
+
+    <div id="addDialog">
+      <h3>Add a Size</h3>
+      <div id="inputDiv">
+        <label htmlFor="store">Store</label>
+        <input type="text" id="storeInput" name="store" />
+        <span id="storeError">Store is required</span>
+      </div>
+      <div id="inputDiv">
+        <label htmlFor="type">Type</label>
+        <input type="text" id="typeInput" name="type" />
+        <span id="typeError">Type is required</span>
+      </div>
+      <div id="inputDiv">
+        <label htmlFor="style">Style</label>
+        <input type="text" id="styleInput" name="style" />
+        <span id="styleError">Style is required</span>
+      </div>
+      <div id="inputDiv">
+        <label htmlFor="size">Size</label>
+        <input type="text" id="sizeInput" name="size" />
+        <span id="sizeError">Size is required</span>
+      </div>
+      <div id="inputDiv">
+        <label htmlFor="notes">Notes</label>
+        <input type="text" id="noteInput" name="notes" />
+      </div>
+      <div id="modalButtonDiv">
+        <button id="addSize">Add Size</button>
+        <button id="cancelAdd">Cancel</button>
+      </div>
+    </div> 
+
+    <div id="editDialog">
+      <h3>Edit Size</h3>
+      <div id="inputDiv">
+        <label id="storeLabel" htmlFor="store">Store</label>
+      </div>
+      <div id="inputDiv">
+        <label id="typeLabel" htmlFor="type">Type</label>
+      </div>
+      <div id="inputDiv">
+        <label id="styleLabel" htmlFor="style">Style</label>
+      </div>
+      <div id="inputDiv">
+        <label id="sizeLabel" htmlFor="size">Size</label>
+      </div>
+      <div id="inputDiv">
+        <label id="noteLabel" htmlFor="notes">Notes</label>
+      </div>
+      <div id="modalButtonDiv">
+        <button id="editSize">Edit Size</button>
+        <button id="cancelEdit">Cancel</button>
+      </div>
+    </div>
+
+    <div id="bottomDiv">
+      <button id="addSizeButton">Add a Size</button>
+    </div>
+
+    <script src="../scripts/options.js"></script>
+    <!-- "Icon made by Flat Icons from www.flaticon.com" -->
+  </body>
+</html>

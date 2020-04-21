@@ -1,0 +1,162 @@
+button {
+  height: 30px;
+  width: 100px;
+  outline: none;
+  margin: 5px;
+  border-radius: 5px;
+  color: darkslategray;
+}
+
+#saveSizeButton:hover, #addSizeButton:hover, #addSize:hover, #editSize:hover {
+  cursor: pointer;
+  background: lightgreen;
+}
+
+#editSizeButton:hover, #viewSizesButton:hover {
+  cursor: pointer;
+  background: lightskyblue;
+}
+
+#removeSizeButton:hover, #suggestSizeButton:hover, #cancelAdd:hover, #cancelEdit:hover {
+  cursor: pointer;
+  background: lightsalmon;
+}
+
+#topDiv {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#bottomDiv {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#topDiv h1 {
+  font-size: 40px;
+  margin: 0 0 5px 0;
+  color: midnightblue;
+}
+
+#topDiv h2 {
+  font-size: 30px;
+  margin: 0 0 5px 0;
+  color: mediumslateblue;
+}
+
+#sizeDiv {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#sizeDiv h2 {
+  font-size: 24px;
+  color: darkslategray;
+}
+
+.itemDiv {
+  width: 16%;
+  margin: 1%;
+  border: 1px solid darkslategray;
+  border-radius: 5px;
+  padding: .25%;
+}
+
+h3 {
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 5px;
+  color: mediumslateblue;
+}
+
+p {
+  font-size: 14px;
+  text-align: center;
+  margin: 5px;
+  color: darkslategray;
+}
+
+#itemType {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: midnightblue;
+}
+
+#buttonDiv, #modalButtonDiv {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+#addDialog, #editDialog {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  width: 40%;
+  left: 29%;
+  top: 15%;
+  padding: 1%;
+  overflow: auto;
+  border: 1px solid darkslategray;
+  border-radius: 5px;
+  background: lightgray;
+}
+
+#addDialog h3, #editDialog h3 {
+  font-size: 28px;
+  margin: 0;
+}
+
+#addDialog div, #editDialog div {
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#inputDiv, #storeLabel, #typeLabel, #styleLabel, #sizeLabel, #noteLabel {
+  display: flex;
+  flex-direction: column;
+}
+
+#inputDiv label {
+  font-size: 20px;
+  margin: 1%;
+  margin-left: auto;
+  margin-right: auto;
+  color: midnightblue;
+}
+
+#inputDiv input {
+  font-size: 18px;
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+  color: darkslategray;
+}
+
+#inputDiv input:focus {
+  outline: none;
+}
+
+#storeLabel, #typeLabel, #styleLabel, #sizeLabel, #noteLabel {
+  width: 100%;
+  text-align: center;
+}
+
+#storeLabel input, #typeLabel input , #styleLabel input, #sizeLabel input, #noteLabel input {
+  margin-top: 1%;
+}
+
+#storeError, #typeError, #styleError, #sizeError {
+  font-size: 12px;
+  color: red;
+  text-align: center;
+  margin: 1%;
+  display: none;
+}

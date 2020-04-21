@@ -1,0 +1,89 @@
+body {
+  width: 150px;
+}
+
+button {
+  height: 30px;
+  width: 100px;
+  outline: none;
+  margin: 5px 25px;
+  border-radius: 5px;
+  color: darkslategray;
+}
+
+#backButton {
+  width: 50px;
+  height: 20px;
+  margin-left: 60%;
+}
+
+#submitButton:hover {
+  cursor: pointer;
+  background: lightgreen;
+}
+
+#viewSizesButton:hover {
+  cursor: pointer;
+  background: lightskyblue;
+}
+
+#suggestSizeButton:hover, #backButton:hover {
+  cursor: pointer;
+  background: lightsalmon;
+}
+
+#searchInput {
+  font-size: 12px;
+  width: 85%;
+  margin-left: 5%;
+  color: darkslategray;
+}
+
+#searchInput:focus {
+  outline: none;
+}
+
+#searchError {
+  color: red;
+}
+
+#sizeDiv {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.itemDiv {
+  width: 100%;
+  margin-bottom: 2%;
+  border: 1px solid darkslategray;
+  border-radius: 5px;
+  padding: .25%;
+}
+
+h3 {
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 5px;
+  color: mediumslateblue;
+}
+
+p {
+  font-size: 14px;
+  text-align: center;
+  margin: 5px;
+  color: darkslategray;
+}
+
+#itemType {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: midnightblue;
+}
+
+#buttonDiv {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-evenly;
+}
