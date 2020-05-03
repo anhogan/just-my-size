@@ -24,7 +24,7 @@ suggestSize.addEventListener('click', function() {
   back.id = 'backButton';
   submit.id = 'submitButton';
 
-  search.setAttribute('placeholder', 'Search by brand');
+  search.setAttribute('placeholder', 'Search your sizes');
   back.textContent = 'Back';
   submit.textContent = 'Search';
 
@@ -58,42 +58,106 @@ suggestSize.addEventListener('click', function() {
   submit.addEventListener('click', function() {
     let input = search.value.toLowerCase();
 
-    let result = mySizes.mySizes.filter(item => {
+    let storeResult = mySizes.mySizes.filter(item => {
       return item.store.toLowerCase() === input
     });
 
-    if (result.length > 0) {
+    let styleResult = mySizes.mySizes.filter(item => {
+      return item.style.toLowerCase() === input
+    });
+
+    let typeResult = mySizes.mySizes.filter(item => {
+      return item.type.toLowerCase() === input
+    });
+
+    if (storeResult.length > 0 || styleResult.length > 0 || typeResult.length > 0) {
       let message = document.getElementById('searchError');
 
       if (message) {
         document.body.removeChild(message);
       } else {
-        result.map(item => {
-          search.style.display = 'none';
-          submit.style.display = 'none';
-  
-          let sizeDiv = document.createElement('div');
-          let storeName = document.createElement('h3');
-          let itemType = document.createElement('p');
-          let itemStyle = document.createElement('p');
-          let size = document.createElement('p');
+        if (storeResult.length > 0) {
+          storeResult.map(item => {
+            search.style.display = 'none';
+            submit.style.display = 'none';
     
-          sizeDiv.id = item.id;
-          sizeDiv.classList.add('itemDiv');
-          itemType.id = 'itemType';
+            let sizeDiv = document.createElement('div');
+            let storeName = document.createElement('h3');
+            let itemType = document.createElement('p');
+            let itemStyle = document.createElement('p');
+            let size = document.createElement('p');
+      
+            sizeDiv.id = item.id;
+            sizeDiv.classList.add('itemDiv');
+            itemType.id = 'itemType';
+      
+            storeName.textContent = item.store;
+            itemType.textContent = item.type;
+            itemStyle.textContent = 'Style: ' + item.style;
+            size.textContent = 'Size: ' + item.size;
+      
+            sizeDiv.appendChild(storeName);
+            sizeDiv.appendChild(itemType);
+            sizeDiv.appendChild(itemStyle);
+            sizeDiv.appendChild(size);
+      
+            document.body.appendChild(sizeDiv);
+          })
+        } else if (styleResult.length > 0) {
+          styleResult.map(item => {
+            search.style.display = 'none';
+            submit.style.display = 'none';
     
-          storeName.textContent = item.store;
-          itemType.textContent = item.type;
-          itemStyle.textContent = 'Style: ' + item.style;
-          size.textContent = 'Size: ' + item.size;
+            let sizeDiv = document.createElement('div');
+            let storeName = document.createElement('h3');
+            let itemType = document.createElement('p');
+            let itemStyle = document.createElement('p');
+            let size = document.createElement('p');
+      
+            sizeDiv.id = item.id;
+            sizeDiv.classList.add('itemDiv');
+            itemType.id = 'itemType';
+      
+            storeName.textContent = item.store;
+            itemType.textContent = item.type;
+            itemStyle.textContent = 'Style: ' + item.style;
+            size.textContent = 'Size: ' + item.size;
+      
+            sizeDiv.appendChild(storeName);
+            sizeDiv.appendChild(itemType);
+            sizeDiv.appendChild(itemStyle);
+            sizeDiv.appendChild(size);
+      
+            document.body.appendChild(sizeDiv);
+          })
+        } else if (typeResult.length > 0) {
+          typeResult.map(item => {
+            search.style.display = 'none';
+            submit.style.display = 'none';
     
-          sizeDiv.appendChild(storeName);
-          sizeDiv.appendChild(itemType);
-          sizeDiv.appendChild(itemStyle);
-          sizeDiv.appendChild(size);
-    
-          document.body.appendChild(sizeDiv);
-        })
+            let sizeDiv = document.createElement('div');
+            let storeName = document.createElement('h3');
+            let itemType = document.createElement('p');
+            let itemStyle = document.createElement('p');
+            let size = document.createElement('p');
+      
+            sizeDiv.id = item.id;
+            sizeDiv.classList.add('itemDiv');
+            itemType.id = 'itemType';
+      
+            storeName.textContent = item.store;
+            itemType.textContent = item.type;
+            itemStyle.textContent = 'Style: ' + item.style;
+            size.textContent = 'Size: ' + item.size;
+      
+            sizeDiv.appendChild(storeName);
+            sizeDiv.appendChild(itemType);
+            sizeDiv.appendChild(itemStyle);
+            sizeDiv.appendChild(size);
+      
+            document.body.appendChild(sizeDiv);
+          })
+        }
       }
     } else {
       let message = document.createElement('p');

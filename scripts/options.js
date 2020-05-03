@@ -1,4 +1,4 @@
-var mySizes = {
+let mySizes = {
   mySizes: []
 };
 
@@ -18,13 +18,15 @@ window.addEventListener('load', function() {
   chrome.storage.sync.get(['mySizes'], function(result) {
     mySizes = result.mySizes;
   });
-})
+});
 
 document.getElementById('addSizeButton').addEventListener('click', function() {
   document.getElementById('addDialog').style.display = 'block';
 });
 
 document.getElementById('addSize').addEventListener('click', function() {
+  console.log(mySizes);
+
   let sizeId;
 
   if (mySizes.mySizes.length === 0) {
