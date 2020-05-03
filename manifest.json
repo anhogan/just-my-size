@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Just My Size",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The perfect fit every time",
   "icons": {
     "16": "images/size-guide16.png",
