@@ -1,9 +1,9 @@
-let suggestSize = document.getElementById('suggestSizeButton');
-let viewSize = document.getElementById('viewSizesButton');
-
-var mySizes = {
+let mySizes = {
   mySizes: []
 };
+
+let suggestSize = document.getElementById('suggestSizeButton');
+let viewSize = document.getElementById('viewSizesButton');
 
 window.addEventListener('load', function() {
   chrome.storage.sync.get(['mySizes'], function(result) {
@@ -12,7 +12,6 @@ window.addEventListener('load', function() {
 });
 
 suggestSize.addEventListener('click', function() {
-  console.log('Suggesting sizes...');
   viewSize.style.display = 'none';
   suggestSize.style.display = 'none';
 
@@ -41,8 +40,6 @@ suggestSize.addEventListener('click', function() {
 
     let message = document.getElementById('searchError');
     let results = document.getElementsByClassName('itemDiv');
-
-    console.log(results);
 
     if (message) {
       document.body.removeChild(message);
@@ -87,9 +84,9 @@ suggestSize.addEventListener('click', function() {
             let itemStyle = document.createElement('p');
             let size = document.createElement('p');
       
-            sizeDiv.id = item.id;
             sizeDiv.classList.add('itemDiv');
             itemType.id = 'itemType';
+            sizeDiv.id = item.id;
       
             storeName.textContent = item.store;
             itemType.textContent = item.type;
@@ -114,9 +111,9 @@ suggestSize.addEventListener('click', function() {
             let itemStyle = document.createElement('p');
             let size = document.createElement('p');
       
-            sizeDiv.id = item.id;
             sizeDiv.classList.add('itemDiv');
             itemType.id = 'itemType';
+            sizeDiv.id = item.id;
       
             storeName.textContent = item.store;
             itemType.textContent = item.type;
@@ -141,9 +138,9 @@ suggestSize.addEventListener('click', function() {
             let itemStyle = document.createElement('p');
             let size = document.createElement('p');
       
-            sizeDiv.id = item.id;
             sizeDiv.classList.add('itemDiv');
             itemType.id = 'itemType';
+            sizeDiv.id = item.id;
       
             storeName.textContent = item.store;
             itemType.textContent = item.type;

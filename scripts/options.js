@@ -25,8 +25,6 @@ document.getElementById('addSizeButton').addEventListener('click', function() {
 });
 
 document.getElementById('addSize').addEventListener('click', function() {
-  console.log(mySizes);
-
   let sizeId;
 
   if (mySizes.mySizes.length === 0) {
@@ -102,6 +100,7 @@ document.getElementById('addSize').addEventListener('click', function() {
     noteInput.value = '';
 
     mySizes.mySizes.push(newSize);
+    
     document.getElementById('addDialog').style.display = 'none';
     document.getElementById('addSizestoPage').style.display = 'none'
 
