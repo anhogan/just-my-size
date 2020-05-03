@@ -1,7 +1,7 @@
 # Just My Size
 The perfect fit every time
 
-A Google Chrome extension
+A Google Chrome extension - currently pending review, but can be used as a Developer extension until it goes live in store.
 
 ## Use This Package
 Clone the repository
