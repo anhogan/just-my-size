@@ -1,9 +1,9 @@
 # Just My Size
 The perfect fit every time
 
-A Google Chrome extension - currently pending review, but can be used as a Developer extension until it goes live in store.
+A Google Chrome extension - add it to your browser using this link: https://chrome.google.com/webstore/detail/just-my-size/ombggmodmhplhgdjkcgieelflokgnbfp
 
-## Use This Package
+## Use This Developer Package
 Clone the repository
 `git clone`
 
