@@ -1,5 +1,12 @@
-const mySizes = {
-  mySizes: []
+var mySizes = [];
+
+document.body.onload = function() {
+  chrome.storage.sync.get('mySizes', function(result) {
+    let values = Object.values(result);
+    for (let i = 0; i < values.length; i++) {
+      mySizes.push(values[i])
+    };
+  });
 };
 
 let page = document.getElementById('sizeDiv');
@@ -14,12 +21,6 @@ let styleLabel = document.getElementById('styleLabel');
 let sizeLabel = document.getElementById('sizeLabel');
 let noteLabel = document.getElementById('noteLabel');
 
-window.addEventListener('load', function() {
-  chrome.storage.sync.get(['mySizes'], function(result) {
-    mySizes = result.mySizes;
-  });
-});
-
 document.getElementById('addSizeButton').addEventListener('click', function() {
   document.getElementById('addDialog').style.display = 'block';
 });
@@ -27,10 +28,10 @@ document.getElementById('addSizeButton').addEventListener('click', function() {
 document.getElementById('addSize').addEventListener('click', function() {
   let sizeId;
 
-  if (mySizes.mySizes.length === 0) {
-    sizeId = 0;
+  if (mySizes.length > 1) {
+    sizeId = mySizes[mySizes.length - 1].id;
   } else {
-    sizeId = mySizes.mySizes[mySizes.mySizes.length - 1].id;
+    sizeId = 0;
   };
 
   let newSize = {
@@ -99,7 +100,11 @@ document.getElementById('addSize').addEventListener('click', function() {
     sizeInput.value = '';
     noteInput.value = '';
 
-    mySizes.mySizes.push(newSize);
+    mySizes.push(newSize);
+
+    chrome.storage.sync.set({ 'mySizes': mySizes }, function(result) {
+      console.log('Syncing your sizes...');
+    });
     
     document.getElementById('addDialog').style.display = 'none';
     document.getElementById('addSizestoPage').style.display = 'none'
@@ -140,7 +145,7 @@ document.getElementById('addSize').addEventListener('click', function() {
       noteLabel.appendChild(noteValue);
     
       document.getElementById('editSize').addEventListener('click', function() {
-        let index = mySizes.mySizes.indexOf(newSize);
+        let index = mySizes.indexOf(newSize);
     
         storeLabel.removeChild(storeValue);
         typeLabel.removeChild(typeValue);
@@ -160,7 +165,7 @@ document.getElementById('addSize').addEventListener('click', function() {
     
         document.getElementById('editDialog').style.display = 'none';
     
-        mySizes.mySizes[index] = editedSize;
+        mySizes[index] = editedSize;
     
         let buttonDiv = document.createElement('div');
         let storeName = document.createElement('h3');
@@ -199,9 +204,6 @@ document.getElementById('addSize').addEventListener('click', function() {
         chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
           console.log('Syncing your sizes...');
         });
-        chrome.storage.sync.get(['mySizes'], function(result) {
-          mySizes = result.mySizes;
-        });
       });
     
       document.getElementById('cancelEdit').addEventListener('click', function() {
@@ -227,27 +229,21 @@ document.getElementById('addSize').addEventListener('click', function() {
     });
 
     remove.addEventListener('click', function() {
-      let index = mySizes.mySizes.indexOf(newSize);
+      let index = mySizes.indexOf(newSize);
     
       if (index >= 0) {
-        mySizes.mySizes.splice(index, 1);
+        mySizes.splice(index, 1);
         let element = document.getElementById(newSize.id);
         page.removeChild(element);
 
         chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
           console.log('Syncing your sizes...');
         });
-        chrome.storage.sync.get(['mySizes'], function(result) {
-          mySizes = result.mySizes;
-        });
       };
     });
 
     chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
       console.log('Syncing your sizes...');
-    });
-    chrome.storage.sync.get(['mySizes'], function(result) {
-      mySizes = result.mySizes;
     });
   };
 });
@@ -257,192 +253,184 @@ document.getElementById('cancelAdd').addEventListener('click', function() {
 });
 
 function constructSizePreferences(mySizes) {
-  chrome.storage.sync.get(['mySizes'], function(result) {
-    mySizes = result.mySizes;
+  if (mySizes.length > 1) {
+    document.getElementById('addSizestoPage').style.display = 'none';
+    for (let i = 1; i < mySizes.length; i++) {
+      let sizeDiv = document.createElement('div');
+      let buttonDiv = document.createElement('div');
+      let storeName = document.createElement('h3');
+      let itemType = document.createElement('p');
+      let itemStyle = document.createElement('p');
+      let size = document.createElement('p');
+      let note = document.createElement('p');
+      let edit = document.createElement('button');
+      let remove = document.createElement('button');
 
-    if (mySizes.mySizes.length !== 0) {
-      document.getElementById('addSizestoPage').style.display = 'none';
-      for (let item of mySizes.mySizes) {
-        let sizeDiv = document.createElement('div');
-        let buttonDiv = document.createElement('div');
-        let storeName = document.createElement('h3');
-        let itemType = document.createElement('p');
-        let itemStyle = document.createElement('p');
-        let size = document.createElement('p');
-        let note = document.createElement('p');
-        let edit = document.createElement('button');
-        let remove = document.createElement('button');
-  
-        sizeDiv.id = item.id;
-        sizeDiv.classList.add('itemDiv');
-        itemType.id = 'itemType';
-        buttonDiv.id = 'buttonDiv';
-        edit.id = 'editSizeButton';
-        remove.id = 'removeSizeButton';
-  
-        storeName.textContent = item.store;
-        itemType.textContent = item.type;
-        itemStyle.textContent = 'Style: ' + item.style;
-        size.textContent = 'Size: ' + item.size;
-        note.textContent = 'Notes: ' + item.notes;
-        edit.textContent = 'Edit Sizing';
-        remove.textContent = 'Remove Sizing';
-  
-        buttonDiv.appendChild(edit);
-        buttonDiv.appendChild(remove);
-  
-        sizeDiv.appendChild(storeName);
-        sizeDiv.appendChild(itemType);
-        sizeDiv.appendChild(itemStyle);
-        sizeDiv.appendChild(size);
-        sizeDiv.appendChild(note);
-        sizeDiv.appendChild(buttonDiv);
-  
-        page.appendChild(sizeDiv);
-  
-        edit.addEventListener('click', function() {
-          document.getElementById('editDialog').style.display = 'block';
-          let element = document.getElementById(item.id);
-        
-          element.removeChild(storeName);
-          element.removeChild(itemType);
-          element.removeChild(itemStyle);
-          element.removeChild(size);
-          element.removeChild(note);
-          element.removeChild(buttonDiv);
-        
-          page.removeChild(element);
-        
-          let storeValue = document.createElement('input');
-          storeValue.setAttribute('value', item.store);
-          storeValue.setAttribute('name', 'store');
-          let typeValue = document.createElement('input');
-          typeValue.setAttribute('value', item.type);
-          typeValue.setAttribute('name', 'type');
-          let styleValue = document.createElement('input');
-          styleValue.setAttribute('value', item.style);
-          styleValue.setAttribute('name', 'style');
-          let sizeValue = document.createElement('input');
-          sizeValue.setAttribute('value', item.size);
-          sizeValue.setAttribute('name', 'size');
-          let noteValue = document.createElement('input');
-          noteValue.setAttribute('value', item.notes);
-          noteValue.setAttribute('name', 'notes');
-        
-          storeLabel.appendChild(storeValue);
-          typeLabel.appendChild(typeValue);
-          styleLabel.appendChild(styleValue);
-          sizeLabel.appendChild(sizeValue);
-          noteLabel.appendChild(noteValue);
-        
-          document.getElementById('editSize').addEventListener('click', function() {
-            let index = mySizes.mySizes.indexOf(item);
-        
-            storeLabel.removeChild(storeValue);
-            typeLabel.removeChild(typeValue);
-            styleLabel.removeChild(styleValue);
-            sizeLabel.removeChild(sizeValue);
-            noteLabel.removeChild(noteValue);
-        
-            let editedSize = {
-              ...item,
-              id: item.id,
-              store: storeValue.value,
-              type: typeValue.value,
-              style: styleValue.value,
-              size: sizeValue.value,
-              notes: noteValue.value
-            };
-        
-            document.getElementById('editDialog').style.display = 'none';
-        
-            mySizes.mySizes[index] = editedSize;
-        
-            let buttonDiv = document.createElement('div');
-            let storeName = document.createElement('h3');
-            let itemType = document.createElement('p');
-            let itemStyle = document.createElement('p');
-            let size = document.createElement('p');
-            let note = document.createElement('p');
-            let edit = document.createElement('button');
-            let remove = document.createElement('button');
-        
-            itemType.id = 'itemType';
-            buttonDiv.id = 'buttonDiv';
-            edit.id = 'editSizeButton';
-            remove.id = 'removeSizeButton';
-        
-            storeName.textContent = editedSize.store;
-            itemType.textContent = editedSize.type;
-            itemStyle.textContent = 'Style: ' + editedSize.style;
-            size.textContent = 'Size: ' + editedSize.size;
-            note.textContent = 'Note: ' + editedSize.notes;
-            edit.textContent = 'Edit Sizing';
-            remove.textContent = 'Remove Sizing';
-        
-            buttonDiv.appendChild(edit);
-            buttonDiv.appendChild(remove);
-        
-            element.appendChild(storeName);
-            element.appendChild(itemType);
-            element.appendChild(itemStyle);
-            element.appendChild(size);
-            element.appendChild(note);
-            element.appendChild(buttonDiv);
-        
-            page.insertBefore(element, page.children[item.id - 1]);
-  
-            chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
-              console.log('Syncing your sizes...');
-            });
-            chrome.storage.sync.get(['mySizes'], function(result) {
-              mySizes = result.mySizes;
-            });
-          });
-        
-          document.getElementById('cancelEdit').addEventListener('click', function() {
-            storeLabel.removeChild(storeValue);
-            typeLabel.removeChild(typeValue);
-            styleLabel.removeChild(styleValue);
-            sizeLabel.removeChild(sizeValue);
-            noteLabel.removeChild(noteValue);
-  
-            document.getElementById('editDialog').style.display = 'none';
-            buttonDiv.appendChild(edit);
-            buttonDiv.appendChild(remove);
-        
-            element.appendChild(storeName);
-            element.appendChild(itemType);
-            element.appendChild(itemStyle);
-            element.appendChild(size);
-            element.appendChild(note);
-            element.appendChild(buttonDiv);
-        
-            page.insertBefore(element, page.children[item.id - 1]);
-          });
-        });
-  
-        remove.addEventListener('click', function() {
-          let index = mySizes.mySizes.indexOf(item);
-        
-          if (index >= 0) {
-            mySizes.mySizes.splice(index, 1);
-            let element = document.getElementById(item.id);
-            page.removeChild(element);
-  
-            chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
-              console.log('Syncing your sizes...');
-            });
-            chrome.storage.sync.get(['mySizes'], function(result) {
-              mySizes = result.mySizes;
-            });
+      sizeDiv.id = mySizes[i].id;
+      sizeDiv.classList.add('itemDiv');
+      itemType.id = 'itemType';
+      buttonDiv.id = 'buttonDiv';
+      edit.id = 'editSizeButton';
+      remove.id = 'removeSizeButton';
+
+      storeName.textContent = mySizes[i].store;
+      itemType.textContent = mySizes[i].type;
+      itemStyle.textContent = 'Style: ' + mySizes[i].style;
+      size.textContent = 'Size: ' + mySizes[i].size;
+      note.textContent = 'Notes: ' + mySizes[i].notes;
+      edit.textContent = 'Edit Sizing';
+      remove.textContent = 'Remove Sizing';
+
+      buttonDiv.appendChild(edit);
+      buttonDiv.appendChild(remove);
+
+      sizeDiv.appendChild(storeName);
+      sizeDiv.appendChild(itemType);
+      sizeDiv.appendChild(itemStyle);
+      sizeDiv.appendChild(size);
+      sizeDiv.appendChild(note);
+      sizeDiv.appendChild(buttonDiv);
+
+      page.appendChild(sizeDiv);
+
+      edit.addEventListener('click', function() {
+        document.getElementById('editDialog').style.display = 'block';
+        let element = document.getElementById(mySizes[i].id);
+      
+        element.removeChild(storeName);
+        element.removeChild(itemType);
+        element.removeChild(itemStyle);
+        element.removeChild(size);
+        element.removeChild(note);
+        element.removeChild(buttonDiv);
+      
+        page.removeChild(element);
+      
+        let storeValue = document.createElement('input');
+        storeValue.setAttribute('value', mySizes[i].store);
+        storeValue.setAttribute('name', 'store');
+        let typeValue = document.createElement('input');
+        typeValue.setAttribute('value', mySizes[i].type);
+        typeValue.setAttribute('name', 'type');
+        let styleValue = document.createElement('input');
+        styleValue.setAttribute('value', mySizes[i].style);
+        styleValue.setAttribute('name', 'style');
+        let sizeValue = document.createElement('input');
+        sizeValue.setAttribute('value', mySizes[i].size);
+        sizeValue.setAttribute('name', 'size');
+        let noteValue = document.createElement('input');
+        noteValue.setAttribute('value', mySizes[i].notes);
+        noteValue.setAttribute('name', 'notes');
+      
+        storeLabel.appendChild(storeValue);
+        typeLabel.appendChild(typeValue);
+        styleLabel.appendChild(styleValue);
+        sizeLabel.appendChild(sizeValue);
+        noteLabel.appendChild(noteValue);
+      
+        document.getElementById('editSize').addEventListener('click', function() {
+          let index = mySizes.indexOf(mySizes[i]);
+      
+          storeLabel.removeChild(storeValue);
+          typeLabel.removeChild(typeValue);
+          styleLabel.removeChild(styleValue);
+          sizeLabel.removeChild(sizeValue);
+          noteLabel.removeChild(noteValue);
+      
+          let editedSize = {
+            ...mySizes[i],
+            id: mySizes[i].id,
+            store: storeValue.value,
+            type: typeValue.value,
+            style: styleValue.value,
+            size: sizeValue.value,
+            notes: noteValue.value
           };
+      
+          document.getElementById('editDialog').style.display = 'none';
+      
+          mySizes[index] = editedSize;
+      
+          let buttonDiv = document.createElement('div');
+          let storeName = document.createElement('h3');
+          let itemType = document.createElement('p');
+          let itemStyle = document.createElement('p');
+          let size = document.createElement('p');
+          let note = document.createElement('p');
+          let edit = document.createElement('button');
+          let remove = document.createElement('button');
+      
+          itemType.id = 'itemType';
+          buttonDiv.id = 'buttonDiv';
+          edit.id = 'editSizeButton';
+          remove.id = 'removeSizeButton';
+      
+          storeName.textContent = editedSize.store;
+          itemType.textContent = editedSize.type;
+          itemStyle.textContent = 'Style: ' + editedSize.style;
+          size.textContent = 'Size: ' + editedSize.size;
+          note.textContent = 'Note: ' + editedSize.notes;
+          edit.textContent = 'Edit Sizing';
+          remove.textContent = 'Remove Sizing';
+      
+          buttonDiv.appendChild(edit);
+          buttonDiv.appendChild(remove);
+      
+          element.appendChild(storeName);
+          element.appendChild(itemType);
+          element.appendChild(itemStyle);
+          element.appendChild(size);
+          element.appendChild(note);
+          element.appendChild(buttonDiv);
+      
+          page.insertBefore(element, page.children[mySizes[i].id - 1]);
+
+          chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
+            console.log('Syncing your sizes...');
+          });
         });
-      }
-    } else {
-      document.getElementById('addSizestoPage').style.display = 'block';
+      
+        document.getElementById('cancelEdit').addEventListener('click', function() {
+          storeLabel.removeChild(storeValue);
+          typeLabel.removeChild(typeValue);
+          styleLabel.removeChild(styleValue);
+          sizeLabel.removeChild(sizeValue);
+          noteLabel.removeChild(noteValue);
+
+          document.getElementById('editDialog').style.display = 'none';
+          buttonDiv.appendChild(edit);
+          buttonDiv.appendChild(remove);
+      
+          element.appendChild(storeName);
+          element.appendChild(itemType);
+          element.appendChild(itemStyle);
+          element.appendChild(size);
+          element.appendChild(note);
+          element.appendChild(buttonDiv);
+      
+          page.insertBefore(element, page.children[mySizes[i].id - 1]);
+        });
+      });
+
+      remove.addEventListener('click', function() {
+        let index = mySizes.indexOf(mySizes[i]);
+      
+        if (index >= 0) {
+          mySizes.splice(index, 1);
+          let element = document.getElementById(mySizes[i].id);
+          page.removeChild(element);
+
+          chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
+            console.log('Syncing your sizes...');
+          });
+        };
+      });
     }
-  });
+  } else {
+    document.getElementById('addSizestoPage').style.display = 'block';
+  };
 };
 
-constructSizePreferences(mySizes);
+setTimeout(function() {
+  constructSizePreferences(mySizes[0]);
+}, 500);
