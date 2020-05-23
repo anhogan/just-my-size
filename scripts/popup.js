@@ -1,9 +1,4 @@
-const mySizes = {
-  mySizes: []
-};
-
-let suggestSize = document.getElementById('suggestSizeButton');
-let viewSize = document.getElementById('viewSizesButton');
+var mySizes = [];
 
 window.addEventListener('load', function() {
   chrome.storage.sync.get(['mySizes'], function(result) {
@@ -11,68 +6,94 @@ window.addEventListener('load', function() {
   });
 });
 
-suggestSize.addEventListener('click', function() {
-  viewSize.style.display = 'none';
-  suggestSize.style.display = 'none';
+setTimeout(function() {
+  let suggestSize = document.getElementById('suggestSizeButton');
+  let viewSize = document.getElementById('viewSizesButton');
 
-  let search = document.createElement('input');
-  let back = document.createElement('button');
-  let submit = document.createElement('button');
+  suggestSize.addEventListener('click', function() {
+    viewSize.style.display = 'none';
+    suggestSize.style.display = 'none';
 
-  search.id = 'searchInput';
-  back.id = 'backButton';
-  submit.id = 'submitButton';
+    let search = document.createElement('input');
+    let back = document.createElement('button');
+    let submit = document.createElement('button');
 
-  search.setAttribute('placeholder', 'Search your sizes');
-  back.textContent = 'Back';
-  submit.textContent = 'Search';
+    search.id = 'searchInput';
+    back.id = 'backButton';
+    submit.id = 'submitButton';
 
-  document.body.appendChild(back);
-  document.body.appendChild(search);
-  document.body.appendChild(submit);
+    search.setAttribute('placeholder', 'Search your sizes');
+    back.textContent = 'Back';
+    submit.textContent = 'Search';
 
-  back.addEventListener('click', function() {
-    viewSize.style.display = 'block';
-    suggestSize.style.display = 'block';
-    search.style.display = 'none';
-    back.style.display = 'none';
-    submit.style.display = 'none';
+    if (mySizes.length === 0) {
+      let message = document.createElement('p');
 
-    let message = document.getElementById('searchError');
-    let results = document.getElementsByClassName('itemDiv');
+      message.className = 'searchError';
 
-    if (message) {
-      document.body.removeChild(message);
-    } else if (results) {
-      let newResults = Array.from(results);
-      for (item of newResults) {
-        let id = document.getElementById(item.id)
-        document.body.removeChild(id);
-      };
-    }
-  });
+      message.textContent = 'No saved sizes'
 
-  submit.addEventListener('click', function() {
-    let input = search.value.toLowerCase();
+      document.body.appendChild(back);
+      document.body.appendChild(message);
+    } else {
+      document.body.appendChild(back);
+      document.body.appendChild(search);
+      document.body.appendChild(submit);
+    };
 
-    let storeResult = mySizes.mySizes.filter(item => {
-      return item.store.toLowerCase() === input
-    });
+    back.addEventListener('click', function() {
+      viewSize.style.display = 'block';
+      suggestSize.style.display = 'block';
+      search.style.display = 'none';
+      back.style.display = 'none';
+      submit.style.display = 'none';
 
-    let styleResult = mySizes.mySizes.filter(item => {
-      return item.style.toLowerCase() === input
-    });
-
-    let typeResult = mySizes.mySizes.filter(item => {
-      return item.type.toLowerCase() === input
-    });
-
-    if (storeResult.length > 0 || styleResult.length > 0 || typeResult.length > 0) {
-      let message = document.getElementById('searchError');
+      let message = document.getElementsByClassName('searchError');
+      let results = document.getElementsByClassName('itemDiv');
 
       if (message) {
-        document.body.removeChild(message);
-      } else {
+        Array.from(message).map(error => {
+          document.body.removeChild(error);
+        });
+      };
+
+      if (results) {
+        Array.from(results).map(result => {
+          document.body.removeChild(result);
+        });
+      };
+    });
+
+    submit.addEventListener('click', function() {
+      let message = document.getElementsByClassName('searchError');
+
+      if (message) {
+        Array.from(message).map(error => {
+          document.body.removeChild(error);
+        })
+      };
+
+      let input = search.value.toLowerCase();
+
+      let storeResult;
+      let styleResult;
+      let typeResult;
+
+      if (mySizes.length > 1) {
+        storeResult = mySizes.filter(item => {
+          return item.store.toLowerCase() === input
+        });
+
+        styleResult = mySizes.filter(item => {
+          return item.style.toLowerCase() === input
+        });
+
+        typeResult = mySizes.filter(item => {
+          return item.type.toLowerCase() === input
+        });
+      };
+
+      if ((storeResult !== undefined && storeResult.length > 0) || (styleResult !== undefined && styleResult.length > 0) || (typeResult !== undefined && typeResult.length > 0)) {
         if (storeResult.length > 0) {
           storeResult.map(item => {
             search.style.display = 'none';
@@ -155,23 +176,23 @@ suggestSize.addEventListener('click', function() {
             document.body.appendChild(sizeDiv);
           })
         }
-      }
+      } else {
+        let message = document.createElement('p');
+
+        message.className = 'searchError';
+
+        message.textContent = 'No matches found for ' + input
+
+        document.body.appendChild(message);
+      };
+    })
+  });
+
+  viewSize.addEventListener('click', function() {
+    if (chrome.runtime.openOptionsPage) {
+      chrome.runtime.openOptionsPage();
     } else {
-      let message = document.createElement('p');
-
-      message.id = 'searchError';
-
-      message.textContent = 'No matches found for ' + input
-
-      document.body.appendChild(message);
+      window.open(chrome.runtime.getURL('options.html'));
     };
-  })
-});
-
-viewSize.addEventListener('click', function() {
-  if (chrome.runtime.openOptionsPage) {
-    chrome.runtime.openOptionsPage();
-  } else {
-    window.open(chrome.runtime.getURL('options.html'));
-  };
-});
+  });
+}, 500);
