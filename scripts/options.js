@@ -1,19 +1,13 @@
 var mySizes = [];
 
-document.body.onload = function(callback) {
+document.body.onload = function() {
   chrome.storage.sync.get('mySizes', function(result) {
     let values = Object.values(result);
     for (let i = 0; i < values.length; i++) {
-      setMySizes(values[i])
+      mySizes.push(values[i])
     };
   });
 };
-
-function setMySizes(size) {
-  mySizes.push(size)
-}
-
-console.log(mySizes);
 
 let page = document.getElementById('sizeDiv');
 let storeInput = document.getElementById('storeInput');
@@ -438,6 +432,5 @@ function constructSizePreferences(mySizes) {
 };
 
 setTimeout(function() {
-  console.log('Invoking function');
   constructSizePreferences(mySizes[0]);
 }, 500);
