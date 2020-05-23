@@ -1,6 +1,4 @@
-var mySizes = {
-  mySizes: []
-};
+var mySizes;
 
 chrome.runtime.onInstalled.addListener(function() {
   chrome.storage.sync.set({ 'mySizes': mySizes }, function() {

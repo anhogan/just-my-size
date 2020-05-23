@@ -1,10 +1,19 @@
-var mySizes;
+var mySizes = [];
 
-document.body.onload = function() {
-  chrome.storage.sync.get(['mySizes'], function(result) {
-    mySizes = result.mySizes;
+document.body.onload = function(callback) {
+  chrome.storage.sync.get('mySizes', function(result) {
+    let values = Object.values(result);
+    for (let i = 0; i < values.length; i++) {
+      setMySizes(values[i])
+    };
   });
 };
+
+function setMySizes(size) {
+  mySizes.push(size)
+}
+
+console.log(mySizes);
 
 let page = document.getElementById('sizeDiv');
 let storeInput = document.getElementById('storeInput');
@@ -25,8 +34,8 @@ document.getElementById('addSizeButton').addEventListener('click', function() {
 document.getElementById('addSize').addEventListener('click', function() {
   let sizeId;
 
-  if (mySizes.mySizes.length > 0) {
-    sizeId = mySizes.mySizes[mySizes.mySizes.length - 1].id;
+  if (mySizes.length > 1) {
+    sizeId = mySizes[mySizes.length - 1].id;
   } else {
     sizeId = 0;
   };
@@ -97,14 +106,10 @@ document.getElementById('addSize').addEventListener('click', function() {
     sizeInput.value = '';
     noteInput.value = '';
 
-    mySizes.mySizes.push(newSize);
+    mySizes.push(newSize);
 
-    chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
+    chrome.storage.sync.set({ 'mySizes': mySizes }, function(result) {
       console.log('Syncing your sizes...');
-    });
-
-    chrome.storage.sync.get(['mySizes'], function(result) {
-      mySizes.mySizes.push(result.mySizes);
     });
     
     document.getElementById('addDialog').style.display = 'none';
@@ -146,7 +151,7 @@ document.getElementById('addSize').addEventListener('click', function() {
       noteLabel.appendChild(noteValue);
     
       document.getElementById('editSize').addEventListener('click', function() {
-        let index = mySizes.mySizes.indexOf(newSize);
+        let index = mySizes.indexOf(newSize);
     
         storeLabel.removeChild(storeValue);
         typeLabel.removeChild(typeValue);
@@ -166,7 +171,7 @@ document.getElementById('addSize').addEventListener('click', function() {
     
         document.getElementById('editDialog').style.display = 'none';
     
-        mySizes.mySizes[index] = editedSize;
+        mySizes[index] = editedSize;
     
         let buttonDiv = document.createElement('div');
         let storeName = document.createElement('h3');
@@ -205,10 +210,6 @@ document.getElementById('addSize').addEventListener('click', function() {
         chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
           console.log('Syncing your sizes...');
         });
-
-        chrome.storage.sync.get(['mySizes'], function(result) {
-          mySizes.mySizes.push(result.mySizes);
-        });
       });
     
       document.getElementById('cancelEdit').addEventListener('click', function() {
@@ -234,29 +235,21 @@ document.getElementById('addSize').addEventListener('click', function() {
     });
 
     remove.addEventListener('click', function() {
-      let index = mySizes.mySizes.indexOf(newSize);
+      let index = mySizes.indexOf(newSize);
     
       if (index >= 0) {
-        mySizes.mySizes.splice(index, 1);
+        mySizes.splice(index, 1);
         let element = document.getElementById(newSize.id);
         page.removeChild(element);
 
         chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
           console.log('Syncing your sizes...');
         });
-
-        chrome.storage.sync.get(['mySizes'], function(result) {
-          mySizes.mySizes.push(result.mySizes);
-        });
       };
     });
 
     chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
       console.log('Syncing your sizes...');
-    });
-
-    chrome.storage.sync.get(['mySizes'], function(result) {
-      mySizes.mySizes.push(result.mySizes);
     });
   };
 });
@@ -266,9 +259,9 @@ document.getElementById('cancelAdd').addEventListener('click', function() {
 });
 
 function constructSizePreferences(mySizes) {
-  if (mySizes !== undefined && mySizes.mySizes.length > 0) {
+  if (mySizes.length > 1) {
     document.getElementById('addSizestoPage').style.display = 'none';
-    for (let item of mySizes.mySizes) {
+    for (let i = 1; i < mySizes.length; i++) {
       let sizeDiv = document.createElement('div');
       let buttonDiv = document.createElement('div');
       let storeName = document.createElement('h3');
@@ -279,18 +272,18 @@ function constructSizePreferences(mySizes) {
       let edit = document.createElement('button');
       let remove = document.createElement('button');
 
-      sizeDiv.id = item.id;
+      sizeDiv.id = mySizes[i].id;
       sizeDiv.classList.add('itemDiv');
       itemType.id = 'itemType';
       buttonDiv.id = 'buttonDiv';
       edit.id = 'editSizeButton';
       remove.id = 'removeSizeButton';
 
-      storeName.textContent = item.store;
-      itemType.textContent = item.type;
-      itemStyle.textContent = 'Style: ' + item.style;
-      size.textContent = 'Size: ' + item.size;
-      note.textContent = 'Notes: ' + item.notes;
+      storeName.textContent = mySizes[i].store;
+      itemType.textContent = mySizes[i].type;
+      itemStyle.textContent = 'Style: ' + mySizes[i].style;
+      size.textContent = 'Size: ' + mySizes[i].size;
+      note.textContent = 'Notes: ' + mySizes[i].notes;
       edit.textContent = 'Edit Sizing';
       remove.textContent = 'Remove Sizing';
 
@@ -308,7 +301,7 @@ function constructSizePreferences(mySizes) {
 
       edit.addEventListener('click', function() {
         document.getElementById('editDialog').style.display = 'block';
-        let element = document.getElementById(item.id);
+        let element = document.getElementById(mySizes[i].id);
       
         element.removeChild(storeName);
         element.removeChild(itemType);
@@ -320,19 +313,19 @@ function constructSizePreferences(mySizes) {
         page.removeChild(element);
       
         let storeValue = document.createElement('input');
-        storeValue.setAttribute('value', item.store);
+        storeValue.setAttribute('value', mySizes[i].store);
         storeValue.setAttribute('name', 'store');
         let typeValue = document.createElement('input');
-        typeValue.setAttribute('value', item.type);
+        typeValue.setAttribute('value', mySizes[i].type);
         typeValue.setAttribute('name', 'type');
         let styleValue = document.createElement('input');
-        styleValue.setAttribute('value', item.style);
+        styleValue.setAttribute('value', mySizes[i].style);
         styleValue.setAttribute('name', 'style');
         let sizeValue = document.createElement('input');
-        sizeValue.setAttribute('value', item.size);
+        sizeValue.setAttribute('value', mySizes[i].size);
         sizeValue.setAttribute('name', 'size');
         let noteValue = document.createElement('input');
-        noteValue.setAttribute('value', item.notes);
+        noteValue.setAttribute('value', mySizes[i].notes);
         noteValue.setAttribute('name', 'notes');
       
         storeLabel.appendChild(storeValue);
@@ -342,7 +335,7 @@ function constructSizePreferences(mySizes) {
         noteLabel.appendChild(noteValue);
       
         document.getElementById('editSize').addEventListener('click', function() {
-          let index = mySizes.mySizes.indexOf(item);
+          let index = mySizes.indexOf(mySizes[i]);
       
           storeLabel.removeChild(storeValue);
           typeLabel.removeChild(typeValue);
@@ -351,8 +344,8 @@ function constructSizePreferences(mySizes) {
           noteLabel.removeChild(noteValue);
       
           let editedSize = {
-            ...item,
-            id: item.id,
+            ...mySizes[i],
+            id: mySizes[i].id,
             store: storeValue.value,
             type: typeValue.value,
             style: styleValue.value,
@@ -362,7 +355,7 @@ function constructSizePreferences(mySizes) {
       
           document.getElementById('editDialog').style.display = 'none';
       
-          mySizes.mySizes[index] = editedSize;
+          mySizes[index] = editedSize;
       
           let buttonDiv = document.createElement('div');
           let storeName = document.createElement('h3');
@@ -396,14 +389,10 @@ function constructSizePreferences(mySizes) {
           element.appendChild(note);
           element.appendChild(buttonDiv);
       
-          page.insertBefore(element, page.children[item.id - 1]);
+          page.insertBefore(element, page.children[mySizes[i].id - 1]);
 
           chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
             console.log('Syncing your sizes...');
-          });
-
-          chrome.storage.sync.get(['mySizes'], function(result) {
-            mySizes.mySizes.push(result.mySizes);
           });
         });
       
@@ -425,24 +414,20 @@ function constructSizePreferences(mySizes) {
           element.appendChild(note);
           element.appendChild(buttonDiv);
       
-          page.insertBefore(element, page.children[item.id - 1]);
+          page.insertBefore(element, page.children[mySizes[i].id - 1]);
         });
       });
 
       remove.addEventListener('click', function() {
-        let index = mySizes.mySizes.indexOf(item);
+        let index = mySizes.indexOf(mySizes[i]);
       
         if (index >= 0) {
-          mySizes.mySizes.splice(index, 1);
-          let element = document.getElementById(item.id);
+          mySizes.splice(index, 1);
+          let element = document.getElementById(mySizes[i].id);
           page.removeChild(element);
 
           chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
             console.log('Syncing your sizes...');
-          });
-
-          chrome.storage.sync.get(['mySizes'], function(result) {
-            mySizes.mySizes.push(result.mySizes);
           });
         };
       });
@@ -452,4 +437,7 @@ function constructSizePreferences(mySizes) {
   };
 };
 
-constructSizePreferences(mySizes);
+setTimeout(function() {
+  console.log('Invoking function');
+  constructSizePreferences(mySizes[0]);
+}, 500);
