@@ -1,13 +1,15 @@
-var mySizes;
+var mySizes = [];
 
 let suggestSize = document.getElementById('suggestSizeButton');
 let viewSize = document.getElementById('viewSizesButton');
 
 window.addEventListener('load', function() {
   chrome.storage.sync.get(['mySizes'], function(result) {
-    mySizes = result.mySizes;
+    mySizes.push(result.mySizes);
   });
 });
+
+console.log(mySizes);
 
 suggestSize.addEventListener('click', function() {
   viewSize.style.display = 'none';
