@@ -43,7 +43,7 @@ button {
   outline: none;
 }
 
-#searchError {
+.searchError {
   color: red;
 }
 

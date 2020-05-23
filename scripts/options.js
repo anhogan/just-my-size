@@ -1,6 +1,4 @@
-const mySizes = {
-  mySizes: []
-};
+var mySizes;
 
 let page = document.getElementById('sizeDiv');
 let storeInput = document.getElementById('storeInput');
@@ -17,6 +15,7 @@ let noteLabel = document.getElementById('noteLabel');
 window.addEventListener('load', function() {
   chrome.storage.sync.get(['mySizes'], function(result) {
     mySizes = result.mySizes;
+    console.log(mySizes);
   });
 });
 
@@ -27,10 +26,10 @@ document.getElementById('addSizeButton').addEventListener('click', function() {
 document.getElementById('addSize').addEventListener('click', function() {
   let sizeId;
 
-  if (mySizes.mySizes.length === 0) {
-    sizeId = 0;
-  } else {
+  if (mySizes !== undefined && mySizes.mySizes.length > 0) {
     sizeId = mySizes.mySizes[mySizes.mySizes.length - 1].id;
+  } else {
+    sizeId = 0;
   };
 
   let newSize = {
@@ -100,6 +99,15 @@ document.getElementById('addSize').addEventListener('click', function() {
     noteInput.value = '';
 
     mySizes.mySizes.push(newSize);
+
+    chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
+      console.log('Syncing your sizes...');
+    });
+
+    chrome.storage.sync.get(['mySizes'], function(result) {
+      mySizes = result.mySizes;
+      console.log(mySizes);
+    });
     
     document.getElementById('addDialog').style.display = 'none';
     document.getElementById('addSizestoPage').style.display = 'none'
@@ -199,8 +207,10 @@ document.getElementById('addSize').addEventListener('click', function() {
         chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
           console.log('Syncing your sizes...');
         });
+
         chrome.storage.sync.get(['mySizes'], function(result) {
           mySizes = result.mySizes;
+          console.log(mySizes);
         });
       });
     
@@ -237,8 +247,10 @@ document.getElementById('addSize').addEventListener('click', function() {
         chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
           console.log('Syncing your sizes...');
         });
+
         chrome.storage.sync.get(['mySizes'], function(result) {
           mySizes = result.mySizes;
+          console.log(mySizes);
         });
       };
     });
@@ -246,8 +258,10 @@ document.getElementById('addSize').addEventListener('click', function() {
     chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
       console.log('Syncing your sizes...');
     });
+
     chrome.storage.sync.get(['mySizes'], function(result) {
       mySizes = result.mySizes;
+      console.log(mySizes);
     });
   };
 });
@@ -257,10 +271,7 @@ document.getElementById('cancelAdd').addEventListener('click', function() {
 });
 
 function constructSizePreferences(mySizes) {
-  chrome.storage.sync.get(['mySizes'], function(result) {
-    mySizes = result.mySizes;
-
-    if (mySizes.mySizes.length !== 0) {
+    if (mySizes !== undefined && mySizes.mySizes.length > 0) {
       document.getElementById('addSizestoPage').style.display = 'none';
       for (let item of mySizes.mySizes) {
         let sizeDiv = document.createElement('div');
@@ -395,8 +406,10 @@ function constructSizePreferences(mySizes) {
             chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
               console.log('Syncing your sizes...');
             });
+
             chrome.storage.sync.get(['mySizes'], function(result) {
               mySizes = result.mySizes;
+              console.log(mySizes);
             });
           });
         
@@ -433,8 +446,10 @@ function constructSizePreferences(mySizes) {
             chrome.storage.sync.set({ 'mySizes': mySizes }, function() {
               console.log('Syncing your sizes...');
             });
+
             chrome.storage.sync.get(['mySizes'], function(result) {
               mySizes = result.mySizes;
+              console.log(mySizes);
             });
           };
         });
@@ -442,7 +457,6 @@ function constructSizePreferences(mySizes) {
     } else {
       document.getElementById('addSizestoPage').style.display = 'block';
     }
-  });
 };
 
 constructSizePreferences(mySizes);
